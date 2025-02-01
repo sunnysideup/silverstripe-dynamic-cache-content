@@ -11,7 +11,7 @@ of the placeholder and the html for the specific user.
 
 3. there is a url `/my-personalised` - this function returns personalised json for the site with a hash.
 
-#### basic example
+### basic example
 
 ```php
 
@@ -50,3 +50,59 @@ echo json_encode([
 
 7. Happy life!
 
+
+### basic example
+
+```js
+document.addEventListener('DOMContentLoaded', async () => {
+    const storageKey = 'dynamicContent';
+    const hmacKey = 'dynamicContentHMAC';
+
+    // Apply stored replacements
+    const applyReplacements = (replacements) => {
+        if (!replacements) return;
+        for (const { selector, html } of replacements) {
+            document.querySelectorAll(selector).forEach(el => el.innerHTML = html);
+        }
+    };
+
+    // Get cached data
+    const cachedData = localStorage.getItem(storageKey);
+    const cachedHmac = localStorage.getItem(hmacKey);
+
+    if (cachedData && cachedHmac) {
+        console.log("ℹ️ Checking hash with server...");
+        
+        // Ask server if the hash is still valid
+        const response = await fetch(`/my-personalised?hash=${cachedHmac}`);
+        const result = await response.json();
+
+        if (result.status === 'ok') {
+            console.log("✅ Hash matches. Using cached content.");
+            applyReplacements(JSON.parse(cachedData));
+            return; // Stop here, no need to fetch again
+        } else {
+            console.warn("❌ Hash mismatch. Fetching fresh content.");
+        }
+    } else {
+        console.log("ℹ️ No cached data. Fetching fresh content.");
+    }
+
+    await fetchFromServer(); // If no valid cache, fetch fresh data
+});
+
+// Fetch fresh data and store it
+async function fetchFromServer() {
+    try {
+        const response = await fetch('/my-personalised');
+        if (!response.ok) throw new Error('Failed to fetch data');
+
+        const { data, hmac } = await response.json();
+        localStorage.setItem('dynamicContent', JSON.stringify(data));
+        localStorage.setItem('dynamicContentHMAC', hmac);
+        applyReplacements(data);
+    } catch (error) {
+        console.error('Error fetching dynamic content:', error);
+    }
+}
+```
