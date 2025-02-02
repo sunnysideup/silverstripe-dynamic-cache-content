@@ -2,13 +2,8 @@
 
 This is a module that, in theory, should allow you to cache your entire site on a CDN. Making it much faster.  
 
-The module then does two things:
-
-a. retrieves universal data.
-
-b. retrieves personal (session based) data
-
-via a ajax graphql call. This then puts (a) and (b) into placeholder spots.
+The module then retrieves universal data (menu), and personal data via an ajax graphql call 
+and replaces it with the "cached" content already loaded.
 
 Here is how it works ... 
 
