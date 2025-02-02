@@ -1,13 +1,19 @@
 <script>
 async function SiteWideDataProviderServerResponse() {
-  const response = await fetch('/graphql', {
+  const response = await fetch('/graphql-site-wide-data', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      query: 'query { siteWideUniversalData, siteWidePersonalisedData }'
-    })
+body: JSON.stringify({
+  query: `
+    query {
+      siteWideUniversalData
+      siteWidePersonalisedData
+    }
+  `
+})
   });
   const result = await response.json();
+  // console.log(result);
   return {
     ...result.data.siteWideUniversalData,
     ...result.data.siteWidePersonalisedData
@@ -24,7 +30,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Load local data
   let localData = localStorage.getItem(storageKey);
   localData = localData ? JSON.parse(localData) : {};
-
+  // console.log(localData);
   // Store original text + apply local data
   Object.entries(localData).forEach(([selector, value]) => {
     document.querySelectorAll(selector).forEach(el => {
@@ -37,7 +43,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Wait for server data
   const serverData = await SiteWideDataProviderServerPromise;
-
+  // console.log(serverData);
   // Update DOM if server data differs
   Object.entries(serverData).forEach(([selector, value]) => {
     if (localData[selector] !== value) {

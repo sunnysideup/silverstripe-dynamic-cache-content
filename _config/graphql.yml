@@ -1,10 +1,11 @@
+SilverStripe\Core\Injector\Injector:
+  SilverStripe\GraphQL\Controller.siteWideData:
+    class: SilverStripe\GraphQL\Controller
+    constructor:
+      schemaKey: siteWideData
+
 SilverStripe\GraphQL\Schema\Schema:
   schemas:
-    default:
-      queries:
-        siteWideUniversalData:
-          type: "JSON"
-          resolver: 'Sunnysideup\DynamicCacheContent\SiteWideDataProvider::resolveUniversalData'
-        siteWidePersonalisedData:
-          type: "JSON"
-          resolver: 'Sunnysideup\DynamicCacheContent\SiteWideDataProvider::resolvePersonalisedData'
+    siteWideData:
+      src:
+        - 'sunnysideup/dynamic-cache-content: _graphql'

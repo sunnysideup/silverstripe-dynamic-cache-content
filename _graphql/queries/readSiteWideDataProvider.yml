@@ -1,0 +1,10 @@
+siteWideUniversalData:
+  type: 'JSONBlob'
+  resolver: 'Sunnysideup\DynamicCacheContent\GraphQL\SiteWideDataProvider::resolveUniversalData'
+  plugins:
+    paginateList: false
+siteWidePersonalisedData:
+  type: 'JSONBlob'
+  resolver: 'Sunnysideup\DynamicCacheContent\GraphQL\SiteWideDataProvider::resolvePersonalisedData'
+  plugins:
+    paginateList: false

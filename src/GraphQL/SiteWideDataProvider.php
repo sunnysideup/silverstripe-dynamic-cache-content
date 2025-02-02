@@ -2,6 +2,9 @@
 
 namespace Sunnysideup\DynamicCacheContent\GraphQL;
 
+use SilverStripe\Core\ClassInfo;
+use SilverStripe\ORM\ArrayList;
+use SilverStripe\View\ArrayData;
 use Sunnysideup\DynamicCacheContent\Interfaces\SiteWideDataProviderInterface;
 
 class SiteWideDataProvider
@@ -11,13 +14,8 @@ class SiteWideDataProvider
         array $args,
         array $context,
         mixed $info
-    ): array {
-        $classes = self::getSiteWideDataClassesWhoProvide();
-        $data = [];
-        foreach ($classes as $class) {
-            $data += $class::resolvePersonalisedData($obj, $args, $context, $info);
-        }
-        return $data;
+    ): string {
+        return self::buildData('resolvePersonalisedData', $obj, $args, $context, $info);
     }
 
     public static function resolveUniversalData(
@@ -25,13 +23,8 @@ class SiteWideDataProvider
         array $args,
         array $context,
         mixed $info
-    ): array {
-        $classes = self::getSiteWideDataClassesWhoProvide();
-        $data = [];
-        foreach ($classes as $class) {
-            $data += $class::resolvePersonalisedData($obj, $args, $context, $info);
-        }
-        return $data;
+    ): string {
+        return self::buildData('resolveUniversalData', $obj, $args, $context, $info);
     }
 
     protected static ?array $siteWideDataClasses = null;
@@ -42,5 +35,15 @@ class SiteWideDataProvider
             self::$siteWideDataClasses = ClassInfo::implementorsOf(SiteWideDataProviderInterface::class);
         }
         return self::$siteWideDataClasses;
+    }
+
+    private static function buildData(string $method, $obj, array $args, array $context, $info): string
+    {
+        $data = [];
+        $classes = self::getSiteWideDataClassesWhoProvide();
+        foreach ($classes as $class) {
+            $data += $class::{$method}($obj, $args, $context, $info);
+        }
+        return json_encode($data);
     }
 }
