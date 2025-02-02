@@ -7,7 +7,8 @@ sites often have one or two personalised messages on each page.
 
 Secondly, with every page, we often load tons of content that is actually the same on every page (header, footer, menu).
 
-By removing these two parts from the page load, we should be able to speed up our websites and be able to cache them entirely.
+By removing these two parts from the page load we should be able to cache the site entirely. 
+This module then provides a way to reinject the removed bits to every page. 
 
 *How?*
 
