@@ -12,10 +12,10 @@ This module then provides a way to reinject the removed bits to every page.
 
 *How?*
 
-In your local storage, you have the universal content that is used on all pages (`navigation menu`) 
-and user specific data (`welcome back Wendy`) and you apply that to the page on load. 
+In your local storage, you have the universal content that is used on all pages (e.g. `navigation menu`) 
+and user specific data (e.g. `welcome back Wendy`) and the code applies that to the page on load. 
 After that the page will validate this information with the server (graphql call)
-and update the page and local storage if they have changed since the last page load.
+and update the page and local storage if the content has changed since the last page load.
 
 On the server, you implement an interface (similar to the flush interface) to any class to show you how to
 provide array items of keys (dom selectors) and values (html) that are returned when the graphql call is made.
