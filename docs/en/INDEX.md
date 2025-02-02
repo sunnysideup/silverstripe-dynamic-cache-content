@@ -13,7 +13,7 @@ provide arrays of keys (selectors) and values (html) that should be returned to 
 
 Here is how to implement the module: 
 
-## server side
+## server side setup
 
 ### identify personalised and universal data
 
@@ -70,7 +70,7 @@ class MyProvider implements SiteWideDataProviderInterface
 
 ```
 
-## client side
+## client side setup
 
 At the bottom of your main `page.ss` file add:
 
@@ -79,6 +79,6 @@ At the bottom of your main `page.ss` file add:
 ```
 This will include a small bit of JS that applies the universal and personalised content to every page as it loads.
 
-## turn on CDN caching
+## caching setup
 
 You can now turn on `CDN` caching for your pages in the usual way and see if they load any faster than before. 
