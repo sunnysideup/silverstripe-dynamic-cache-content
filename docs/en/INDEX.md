@@ -1,6 +1,7 @@
 # tl;dr
 
 *Why?*
+
 In theory, it would be really nice to cache your entire website on a CDN. In practice, this is problematic, as 
 sites often have one or two personalised messages on each page.
 
