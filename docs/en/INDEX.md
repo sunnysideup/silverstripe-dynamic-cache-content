@@ -1,15 +1,22 @@
 # tl;dr
 
-This is a module should allow you to cache your entire site on a CDN. 
-Making it much faster (this is the theory and hope).
-The basic idea is that each page only loads the stuff that is publicly available and unique to that page. This part is cached.
+*Why?*
+In theory, it would be really nice to cache your entire website on a CDN. In practice, this is problematic, as 
+sites often have one or two personalised messages on each page.
+
+Secondly, with every page, we often load tons of content that is actually the same on every page (header, footer, menu).
+
+By removing these two parts from the page load, we should be able to speed up our websites and be able to cache them entirely.
+
+*How?*
 
 In your local storage, you have the universal content that is used on all pages (`navigation menu`) 
 and user specific data (`welcome back Wendy`) and you apply that to the page on load. 
-After that the page will validate this information with the server and update the page and local storage for the next page load.
+After that the page will validate this information with the server (graphql call)
+and update the page and local storage if they have changed since the last page load.
 
-You can then implement an interface (similar to the flush interface) and let any class, with this interface applied, 
-provide arrays of keys (selectors) and values (html) that should be returned to do this replacement. 
+On the server, you implement an interface (similar to the flush interface) to any class to show you how to
+provide array items of keys (dom selectors) and values (html) that are returned when the graphql call is made.
 
 Here is how to implement the module: 
 
