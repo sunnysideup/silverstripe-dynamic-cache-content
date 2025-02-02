@@ -91,3 +91,7 @@ This will include a small bit of JS that applies the universal and personalised 
 ## caching setup
 
 You can now turn on `CDN` caching for your pages in the usual way and see if they load any faster than before. 
+
+## does this actually work?
+
+Please try it and see for yourself. Any feedback appreciated. 
