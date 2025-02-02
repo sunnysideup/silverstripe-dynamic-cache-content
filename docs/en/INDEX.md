@@ -2,7 +2,7 @@
 
 *Why?*
 
-In theory, it would be really nice to cache your entire website on a CDN. In practice, this is problematic, as 
+In theory, it would be really nice to cache your entire website on a CDN. In practice, this is problematic as 
 sites often have one or two personalised messages on each page.
 
 Secondly, with every page, we often load tons of content that is actually the same on every page (header, footer, menu).
