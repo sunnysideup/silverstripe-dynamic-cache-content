@@ -1,4 +1,4 @@
-# td;dr
+# tl;dr
 
 How this work...
 
