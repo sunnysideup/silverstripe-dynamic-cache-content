@@ -1,6 +1,6 @@
 # tl;dr
 
-This is a module that, in theory, should allow you to cache your entire site on a CDN. 
+This is a module should allow you to cache your entire site on a CDN. 
 Making it much faster (this is the theory and hope).
 The basic idea is that each page only loads the stuff that is publicly available and unique to that page. This part is cached.
 
