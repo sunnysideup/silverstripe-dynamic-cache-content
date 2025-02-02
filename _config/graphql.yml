@@ -1,0 +1,10 @@
+SilverStripe\GraphQL\Schema\Schema:
+  schemas:
+    default:
+      queries:
+        siteWideUniversalData:
+          type: "JSON"
+          resolver: 'Sunnysideup\DynamicCacheContent\SiteWideDataProvider::resolveUniversalData'
+        siteWidePersonalisedData:
+          type: "JSON"
+          resolver: 'Sunnysideup\DynamicCacheContent\SiteWideDataProvider::resolvePersonalisedData'
