@@ -39,6 +39,9 @@ class SiteWideDataProvider
 
     private static function buildData(string $method, $obj, array $args, array $context, $info): string
     {
+        if (empty($args['pageId'])) {
+            throw new \InvalidArgumentException('Page ID is required for personalised data');
+        }
         $data = [];
         $classes = self::getSiteWideDataClassesWhoProvide();
         foreach ($classes as $class) {
