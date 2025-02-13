@@ -40,10 +40,6 @@
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
-  "bin": [
-    "bin/npm-build-dynamic-cache-content.sh",
-    "bin/npm-watch-dynamic-cache-content.sh"
-  ],
   "authors": [
     {
       "name": "Nicolaas Thiemen Francken",
