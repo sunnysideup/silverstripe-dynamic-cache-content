@@ -1,6 +1,6 @@
 ;(() => {
     const UNIVERSAL_STORAGE_KEY = 'SiteWideUniversalData'
-    const ONE_HOUR = 3600000
+    const ONE_HOUR = 60 * 60 * 1000
 
     function getCachedUniversalData () {
         try {
@@ -39,8 +39,6 @@
                   'siteWidePersonalisedData' +
                   pageIdString +
                   queryEnd
-
-        console.log(query)
 
         return fetch('/graphql-site-wide-data', {
             method: 'POST',
@@ -90,7 +88,7 @@
     // Start fetching site-wide data immediately without blocking rendering
     const siteWideDataPromise = new Promise(resolve => {
         setTimeout(() => {
-            fetchSiteWideData('4373').then(resolve)
+            fetchSiteWideData('$ID').then(resolve)
         }, 0)
     })
 
