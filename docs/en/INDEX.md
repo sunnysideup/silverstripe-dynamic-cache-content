@@ -98,10 +98,6 @@ Please try it and see for yourself. Any feedback appreciated.
 
 ## clearing the cache
 
-You can add the following method to your PageController:
+run `?flush=all`
 
-```php
-public function IsFlush() : string
-{
-    return $this->request->getVar('flush') ? 'true' : ''
-}
+You can also extends `function IsFlush` in the PageController and set it to return 'true' to ensure data is removed.

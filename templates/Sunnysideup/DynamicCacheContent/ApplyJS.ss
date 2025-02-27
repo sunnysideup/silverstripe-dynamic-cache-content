@@ -1,5 +1,5 @@
 ;(() => {
-    // Constant to reset local storage
+    // Determine if local storage should be reset
     const urlParams = new URLSearchParams(window.location.search)
     const RESET = urlParams.has('flush') || '$IsFlush' === 'true'
 
@@ -18,7 +18,7 @@
      * Retrieves cached universal data from local storage if it's still valid.
      * @returns {object|undefined} Cached data or undefined if expired/missing.
      */
-    function getCachedUniversalData () {
+    const getCachedUniversalData = () => {
         try {
             const stored = localStorage.getItem(UNIVERSAL_STORAGE_KEY)
             if (stored) {
@@ -33,7 +33,7 @@
      * Stores universal data in local storage with a timestamp.
      * @param {object} data - The universal data to cache.
      */
-    function setCachedUniversalData (data) {
+    const setCachedUniversalData = data => {
         localStorage.setItem(
             UNIVERSAL_STORAGE_KEY,
             JSON.stringify({ data, timestamp: Date.now() })
@@ -45,7 +45,7 @@
      * @param {string} pageId - The current page's ID.
      * @returns {Promise<object>} Fetched universal and personalized data.
      */
-    async function fetchSiteWideData (pageId) {
+    const fetchSiteWideData = async pageId => {
         if (!pageId) throw new Error('Page ID is required')
 
         let universalData = getCachedUniversalData()
@@ -96,7 +96,7 @@
      * @param {object} values - Data to apply (e.g., class, HTML content, callback function).
      * @param {boolean} [runCallback=false] - Whether to execute the callback.
      */
-    function applyData (selector, values, runCallback = false) {
+    const applyData = (selector, values, runCallback = false) => {
         requestIdleCallback(() => {
             document.querySelectorAll(selector).forEach(el => {
                 if (values.class && !el.classList.contains(values.class)) {
