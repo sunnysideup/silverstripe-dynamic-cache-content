@@ -95,3 +95,13 @@ You can now turn on `CDN` caching for your pages in the usual way and see if the
 ## does this actually work?
 
 Please try it and see for yourself. Any feedback appreciated. 
+
+## clearing the cache
+
+You can add the following method to your PageController:
+
+```php
+public function IsFlush() : string
+{
+    return $this->request->getVar('flush') ? 'true' : ''
+}

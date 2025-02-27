@@ -1,2 +1,5 @@
 # see https://docs.silverstripe.org/en/developer_guides/configuration/configuration/
 
+SilverStripe\CMS\Controllers\ContentController:
+  extensions:
+    - Sunnysideup\DynamicCacheContent\Extensions\DynamicCacheContentExtension
