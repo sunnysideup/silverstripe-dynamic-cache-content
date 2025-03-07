@@ -42,41 +42,49 @@
 
   /**
    * Fetches site-wide data from the GraphQL API.
-   * @param {string} pageId - The current page's ID.
+   * @param {number} pageId - The current page's ID.
+   * @param {object} otherData - Additional data for the request.
    * @returns {Promise<object>} Fetched universal and personalized data.
    */
-  const fetchSiteWideData = async pageId => {
+  const fetchSiteWideData = async (pageId, action, $otherId = {}) => {
     if (!pageId) throw new Error('Page ID is required')
 
     let universalData = getCachedUniversalData()
 
-    // Build the GraphQL query dynamically
-    const queryStart = 'query{ '
-    const pageIdString = `(pageId: ${pageId}) `
-    const queryEnd = ' } '
-    const query =
-      universalData === undefined
-        ? queryStart +
-          'siteWideUniversalData' +
-          pageIdString +
-          ' siteWidePersonalisedData' +
-          pageIdString +
-          queryEnd
-        : queryStart + 'siteWidePersonalisedData' + pageIdString + queryEnd
+    // Construct GraphQL query dynamically
+    const queryFields = []
+    if (universalData === undefined)
+      queryFields.push(
+        'siteWideUniversalData(pageId: $pageId, action: $action, otherId: $otherId)'
+      )
+    queryFields.push(
+      'siteWidePersonalisedData(pageId: $pageId, action: $action, otherId: $otherId)'
+    )
+
+    const query = `
+    query SiteWideData(\$pageId: Int, \$action: String,\$otherId: Int) {
+      ${queryFields.join(' ')}
+    }
+  `
+
+    const variables = { pageId: Number(pageId), action, $otherId }
 
     // Fetch data from API
     return fetch('/graphql-site-wide-data', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query })
+      body: JSON.stringify({ query, variables })
     })
       .then(response => response.json())
       .then(result => {
+        if (!result.data) throw new Error('Invalid GraphQL response')
+
         // Cache universal data if it's newly fetched
         if (universalData === undefined && result.data.siteWideUniversalData) {
           universalData = result.data.siteWideUniversalData
           setCachedUniversalData(universalData)
         }
+
         return {
           universal: universalData,
           personalised: result.data.siteWidePersonalisedData
@@ -116,7 +124,14 @@
 
   // Begin fetching site-wide data asynchronously
   ;(async () => {
-    const { universal, personalised } = await fetchSiteWideData('$ID')
+    const { universal, personalised } = await fetchSiteWideData(
+      ...[
+        '$ID',
+        '$ActionForDynamicCaching',
+        '$OtherIDForDynamicCaching',
+        $OtherVarsForDynamicCachingAsJson.RAW
+      ]
+    )
 
     // Apply universal data if not already applied from cache
     if (!cachedUniversal && universal) {

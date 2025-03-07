@@ -1,14 +1,20 @@
 siteWideUniversalData:
-  type: "JSONBlob"
+  type: 'JSONBlob'
   args:
-    pageId: "ID"
+    pageId: 'Int'
+    action: 'String'
+    otherId: 'Int'
+    # otherData: JSONBlob!
   resolver: 'Sunnysideup\DynamicCacheContent\GraphQL\SiteWideDataProvider::resolveUniversalData'
   plugins:
     paginateList: false
 siteWidePersonalisedData:
-  type: "JSONBlob"
+  type: 'JSONBlob'
   args:
-    pageId: "ID"
+    pageId: 'Int'
+    action: 'String'
+    otherId: 'Int'
+    # otherData: JSONBlob!
   resolver: 'Sunnysideup\DynamicCacheContent\GraphQL\SiteWideDataProvider::resolvePersonalisedData'
   plugins:
     paginateList: false

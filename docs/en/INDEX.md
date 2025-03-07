@@ -2,13 +2,18 @@
 
 *Why?*
 
-In theory, it would be really nice to cache your entire website on a CDN. In practice, this is problematic as 
-sites often have one or two personalised messages on each page.
+In theory, it would be really nice to cache your entire website on a CDN.
+In practice, this is problematic as sites often have one or two personalised messages on each page.
 
 Secondly, with every page, we often load tons of content that is actually the same on every page (header, footer, menu).
 
-By removing these two parts from the page load we should be able to cache the site entirely in the leanest possible way. 
-This module then provides a way to reinject the removed bits to every page.
+By removing these two parts from the page load we should be able to cache the site entirely in the leanest possible way. This module then provides a way to reinject the removed bits to every page.
+
+The overall goal here is not to make the cache lean. The overall goal is combine caching with personalised data.
+
+Once this is possible, there is no reason for us to cache / load an identical footer on every page, so we just add that.
+
+This means that a page load only loads the bits that are changing for each page.
 
 *How?*
 
@@ -30,17 +35,17 @@ Here is how to implement the module:
    If it is specific to that page (e.g. userform) - then it is outside of the scope here. Dont cache that page.
    If it is personalised but the same throughout the site (e.g. `Welcome back User` - shown on the header on every page)
    then follow steps below.
-   
-3. Identify parts that are the same on every page (e.g. menu, footer)
 
-4. Replace the personalised data in the template with the non-personalised version - e.g. `Click here to login`.
+2. Identify parts that are the same on every page (e.g. menu, footer)
+
+3. Replace the personalised data in the template with the non-personalised version - e.g. `Click here to login`.
    The template should have the content you would expect, for example, Google to index. Not, `hello $CurrentUser.FirstName`.
    Keep the containing tag and note the assocated selector (e.g. `#welcome-message`, `.my-message`).
 
-6. For the universal data (e.g. footer or menu), also remove this from the your templates.
+4. For the universal data (e.g. footer or menu), also remove this from the your templates.
    However, again, keep the containing tag and note the associated selector (e.g. `#footer`),
 
-7. You can now start to setup methods that return arrays of `selector` keys and their personalised values / universal values.
+5. You can now start to setup methods that return arrays of `selector` keys and their personalised values / universal values.
    This works as follows:
 
 ### basic example
@@ -77,6 +82,17 @@ class MyProvider implements SiteWideDataProviderInterface
     }
 }
 
+class MyPageController extends PageController()
+{
+    /**
+     * this is other data that you provide to the cache to make it work.
+     */
+    public function OtherVarsForDynamicCachingAsJson():string
+    {
+        return json_encode(['OtherID' => $this->request?->Param('ID') ?:0]);
+    }
+}
+
 ```
 
 ## client side setup
@@ -84,7 +100,9 @@ class MyProvider implements SiteWideDataProviderInterface
 At the bottom of your main `page.ss` file add:
 
 ```ss
-<% include Sunnysideup/DynamicCacheContent/ApplyJs %>
+<script>
+<% include Sunnysideup/DynamicCacheContent/ApplyJS %>
+</script>
 ```
 This will include a small bit of JS that applies the universal and personalised content to every page as it loads.
 
