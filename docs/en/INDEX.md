@@ -81,15 +81,35 @@ class MyProvider implements SiteWideDataProviderInterface
         ];
     }
 }
+```
 
+Here are some examples of how you can override provision of variables:
+
+```php
 class MyPageController extends PageController()
 {
-    /**
-     * this is other data that you provide to the cache to make it work.
-     */
-    public function OtherVarsForDynamicCachingAsJson():string
+    public function IsFlush(): string
     {
-        return json_encode(['OtherID' => $this->request?->Param('ID') ?:0]);
+        $owner = $this->getOwner();
+        return $owner->request->getVar('flush') ? 'true' : '';
+    }
+
+    public function ActionForDynamicCaching(): string
+    {
+        $owner = $this->getOwner();
+        return $owner->request->param('Actions') ?: '';
+    }
+
+    public function IDForDynamicCaching(): int
+    {
+        $owner = $this->getOwner();
+        return $owner->request->param('ID') ?: 0;
+    }
+
+    public function OtherIDForDynamicCaching(): string
+    {
+        $owner = $this->getOwner();
+        return $owner->request->param('OtherID') ?: '';
     }
 }
 

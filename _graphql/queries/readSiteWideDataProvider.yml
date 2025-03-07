@@ -3,7 +3,8 @@ siteWideUniversalData:
   args:
     pageId: 'Int'
     action: 'String'
-    otherId: 'Int'
+    id: 'Int'
+    otherId: 'String'
     # otherData: JSONBlob!
   resolver: 'Sunnysideup\DynamicCacheContent\GraphQL\SiteWideDataProvider::resolveUniversalData'
   plugins:
@@ -13,7 +14,8 @@ siteWidePersonalisedData:
   args:
     pageId: 'Int'
     action: 'String'
-    otherId: 'Int'
+    id: 'Int'
+    otherId: 'String'
     # otherData: JSONBlob!
   resolver: 'Sunnysideup\DynamicCacheContent\GraphQL\SiteWideDataProvider::resolvePersonalisedData'
   plugins:

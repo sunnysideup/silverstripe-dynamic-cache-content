@@ -46,7 +46,7 @@
    * @param {object} otherData - Additional data for the request.
    * @returns {Promise<object>} Fetched universal and personalized data.
    */
-  const fetchSiteWideData = async (pageId, action, otherId) => {
+  const fetchSiteWideData = async (pageId, action, id, otherId = {}) => {
     if (!pageId) throw new Error('Page ID is required')
 
     let universalData = getCachedUniversalData()
@@ -55,19 +55,24 @@
     const queryFields = []
     if (universalData === undefined)
       queryFields.push(
-        'siteWideUniversalData(pageId: \$pageId, action: \$action, otherId: \$otherId)'
+        'siteWideUniversalData(pageId: \$pageId, action: \$action, id: \$id, otherId: \$otherId)'
       )
     queryFields.push(
-      'siteWidePersonalisedData(pageId: \$pageId, action: \$action, otherId: \$otherId)'
+      'siteWidePersonalisedData(pageId: \$pageId, action: \$action, id: \$id, otherId: \$otherId)'
     )
 
     const query = `
-    query SiteWideData(\$pageId: Int, \$action: String,\$otherId: Int) {
+    query SiteWideData(\$pageId: Int, \$action: String,\$id: Int, \$otherId: String) {
       ${queryFields.join(' ')}
     }
   `
 
-    const variables = { pageId: Number(pageId), action: String(action), otherId: Number(otherId)}
+    const variables = {
+      pageId: Number(pageId),
+      action: String(action),
+      id: Number(id),
+      otherId: String(otherId)
+    }
 
     // Fetch data from API
     return fetch('/graphql-site-wide-data', {
@@ -128,8 +133,9 @@
       ...[
         '$ID',
         '$ActionForDynamicCaching',
-        '$OtherIDForDynamicCaching',
-        $OtherVarsForDynamicCachingAsJson.RAW
+        '$IDForDynamicCaching',
+        '$OtherIDForDynamicCaching'
+        // $OtherVarsForDynamicCachingAsJson.RAW
       ]
     )
 
