@@ -15,13 +15,14 @@ class DynamicCacheContentExtension extends Extension
     public function ActionForDynamicCaching(): string
     {
         $owner = $this->getOwner();
-        return $owner->request->param('Actions') ?: '';
+        return $owner->request->param('Action') ?: '';
     }
 
     public function IDForDynamicCaching(): int
     {
         $owner = $this->getOwner();
-        return $owner->request->param('ID') ?: 0;
+        $v = $owner->request->param('ID') ?: 0;
+        return (int) $v;
     }
 
     public function OtherIDForDynamicCaching(): string
