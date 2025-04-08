@@ -63,7 +63,9 @@ class MyProvider implements SiteWideDataProviderInterface
     ): array
     {
         return [
-            '#personal' => Security::getCurrentUser()?->getTitle(),
+            '#personal' => ['html' => Security::getCurrentUser()?->getTitle()],
+            '#more' => ['class' => 'hide'],
+            '.foo' => ['class' => 'show'],
         ];
 
     }
@@ -76,8 +78,8 @@ class MyProvider implements SiteWideDataProviderInterface
     ): array
     {
         return [
-            '#main' => '<p>Better content</p>',
-            'footer' => '<h1>My Footer</h1>',
+            '#main' => ['html' => '<p>Better content</p>'],
+            'footer' => ['html' => '<h1>My Footer</h1>'],
         ];
     }
 }

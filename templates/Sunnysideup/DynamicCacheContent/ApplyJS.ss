@@ -1,7 +1,11 @@
-;(() => {
+window.IsFlush = '$IsFlush' // This is a placeholder for the actual value
+
+
+// This script is designed to be included in a SilverStripe template.'
+const dynamicCacheContent = providedPersonalData => {
   // Determine if local storage should be reset
   const urlParams = new URLSearchParams(window.location.search)
-  const RESET = urlParams.has('flush') || '$IsFlush' === 'true'
+  const RESET = urlParams.has('flush') || window.IsFlush === 'true'
 
   // Key used for storing site-wide universal data in local storage
   const UNIVERSAL_STORAGE_KEY = 'SiteWideUniversalData'
@@ -53,19 +57,19 @@
 
     // Construct GraphQL query dynamically
     const queryFields = []
-    if (universalData === undefined)
+    if (universalData === undefined) {
       queryFields.push(
         'siteWideUniversalData(pageId: \$pageId, action: \$action, id: \$id, otherId: \$otherId)'
       )
+    }
     queryFields.push(
       'siteWidePersonalisedData(pageId: \$pageId, action: \$action, id: \$id, otherId: \$otherId)'
     )
 
     const query = `
-    query SiteWideData(\$pageId: Int, \$action: String,\$id: Int, \$otherId: String) {
+    query SiteWideData(\$pageId: Int, \$action: String, \$id: Int, \$otherId: String) {
       ${queryFields.join(' ')}
-    }
-  `
+    }`
 
     const variables = {
       pageId: Number(pageId),
@@ -101,21 +105,27 @@
    * Applies fetched data to DOM elements matching a selector.
    * @param {string} selector - CSS selector for target elements.
    * @param {object} values - Data to apply (e.g., class, HTML content, callback function).
-   * @param {boolean} [runCallback=false] - Whether to execute the callback.
    */
-  const applyData = (selector, values, runCallback = false) => {
-    requestAnimationFrame(() => {
-      document.querySelectorAll(selector).forEach(el => {
-        if (values.class && !el.classList.contains(values.class)) {
-          el.classList.add(values.class)
-        }
-        if (values.html && el.innerHTML !== values.html) {
-          el.innerHTML = values.html
-        }
-        if (runCallback && values.callback) {
-          values.callback(el)
-        }
-      })
+  const applyData = (selector, values) => {
+    document.querySelectorAll(selector).forEach(el => {
+      if (values.class && !el.classList.contains(values.class)) {
+        el.classList.add(values.class)
+      }
+      if (values.removeClass && el.classList.contains(values.removeClass)) {
+        el.classList.remove(values.removeClass)
+      }
+      if (values.html && el.innerHTML !== values.html) {
+        el.innerHTML = values.html
+      }
+      if (values.prepend && !el.innerHTML.includes(values.prepend)) {
+        el.innerHTML = values.prepend + el.innerHTML
+      }
+      if (values.append && !el.innerHTML.includes(values.append)) {
+        el.innerHTML = el.innerHTML + values.append
+      }
+      if (values.callback) {
+        values.callback(el)
+      }
     })
   }
 
@@ -126,6 +136,15 @@
       applyData(selector, values)
     })
   }
+  // run the provided personal data
+  if (providedPersonalData) {
+    Object.entries(providedPersonalData).forEach(([selector, values]) => {
+      applyData(selector, values)
+    })
+  }
+  if (providedPersonalData && cachedUniversal) {
+    return
+  }
 
   // Begin fetching site-wide data asynchronously
   ;(async () => {
@@ -135,22 +154,27 @@
         '$ActionForDynamicCaching',
         '$IDForDynamicCaching',
         '$OtherIDForDynamicCaching'
-        // $OtherVarsForDynamicCachingAsJson.RAW
       ]
     )
 
     // Apply universal data if not already applied from cache
     if (!cachedUniversal && universal) {
-      Object.entries(universal).forEach(([selector, values]) => {
-        applyData(selector, values)
+      requestAnimationFrame(() => {
+        Object.entries(universal).forEach(([selector, values]) => {
+          applyData(selector, values)
+        })
       })
     }
 
     // Apply personalized data
-    if (personalised) {
-      Object.entries(personalised).forEach(([selector, values]) => {
-        applyData(selector, values, true)
+    if (!providedPersonalData && personalised) {
+      requestAnimationFrame(() => {
+        Object.entries(personalised).forEach(([selector, values]) => {
+          applyData(selector, values)
+        })
       })
     }
   })()
-})()
+}
+dynamicCacheContent(null)
+
