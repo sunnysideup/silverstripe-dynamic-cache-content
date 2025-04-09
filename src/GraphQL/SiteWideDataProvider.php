@@ -47,6 +47,8 @@ class SiteWideDataProvider
         foreach ($classes as $class) {
             $data += $class::{$method}($obj, $args, $context, $info);
         }
-        return json_encode($data);
+        $data = json_encode($data);
+        $data = trim(preg_replace('/\s+/', ' ', $data));
+        return $data;
     }
 }
