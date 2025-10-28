@@ -1,7 +1,6 @@
 window.IsFlush = '$IsFlush' // This is a placeholder for the actual value
 
 
-// This script is designed to be included in a SilverStripe template.'
 const dynamicCacheContent = providedPersonalData => {
   // Determine if local storage should be reset
   const urlParams = new URLSearchParams(window.location.search)
