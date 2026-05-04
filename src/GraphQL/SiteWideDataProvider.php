@@ -2,9 +2,8 @@
 
 namespace Sunnysideup\DynamicCacheContent\GraphQL;
 
+use InvalidArgumentException;
 use SilverStripe\Core\ClassInfo;
-use SilverStripe\ORM\ArrayList;
-use SilverStripe\View\ArrayData;
 use Sunnysideup\DynamicCacheContent\Interfaces\SiteWideDataProviderInterface;
 
 class SiteWideDataProvider
@@ -34,21 +33,24 @@ class SiteWideDataProvider
         if (self::$siteWideDataClasses === null) {
             self::$siteWideDataClasses = ClassInfo::implementorsOf(SiteWideDataProviderInterface::class);
         }
+
         return self::$siteWideDataClasses;
     }
 
     private static function buildData(string $method, $obj, array $args, array $context, $info): string
     {
         if (empty($args['pageId'])) {
-            throw new \InvalidArgumentException('Page ID is required for personalised data');
+            throw new InvalidArgumentException('Page ID is required for personalised data');
         }
+
         $data = [];
         $classes = self::getSiteWideDataClassesWhoProvide();
         foreach ($classes as $class) {
             $data += $class::{$method}($obj, $args, $context, $info);
         }
+
         $data = json_encode($data);
-        $data = trim(preg_replace('/\s+/', ' ', $data));
+        $data = trim((string) preg_replace('/\s+/', ' ', $data));
         return $data;
     }
 }
