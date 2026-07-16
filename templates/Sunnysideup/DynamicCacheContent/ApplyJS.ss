@@ -113,6 +113,11 @@ const dynamicCacheContent = providedPersonalData => {
       if (values.removeClass && el.classList.contains(values.removeClass)) {
         el.classList.remove(values.removeClass)
       }
+      if (values.attrs) {
+        for (let [attrName, attrValue] of Object.entries(values.attrs)) {
+          el.setAttribute(attrName, attrValue)
+        }
+      }
       if (values.html && el.innerHTML !== values.html) {
         el.innerHTML = values.html
       }
