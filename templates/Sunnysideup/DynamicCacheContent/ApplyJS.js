@@ -104,6 +104,9 @@ const dynamicCacheContent = providedPersonalData => {
    * @param {object} values - Data to apply (e.g., class, HTML content, callback function).
    */
   const applyData = (selector, values) => {
+    if (selector.startsWith('$')) {
+      return
+    }
     document.querySelectorAll(selector).forEach(el => {
       if (values.class && !el.classList.contains(values.class)) {
         el.classList.add(values.class)
@@ -113,7 +116,11 @@ const dynamicCacheContent = providedPersonalData => {
       }
       if (values.attrs) {
         for (let [attrName, attrValue] of Object.entries(values.attrs)) {
-          el.setAttribute(attrName, attrValue)
+          if (attrValue === null) {
+            el.removeAttribute(attrName)
+          } else {
+            el.setAttribute(attrName, attrValue)
+          }
         }
       }
       if (values.html && el.innerHTML !== values.html) {
@@ -131,6 +138,18 @@ const dynamicCacheContent = providedPersonalData => {
     })
   }
 
+  const applySecurityToken = token => {
+    for (const el of document.querySelectorAll('[data-add-security-id-to]')) {
+      const attrs = (el.dataset.addSecurityIdTo || '').split(',').map(attr => attr.trim())
+      for (const attr of attrs) {
+        const currentValue = el.getAttribute(attr) || ''
+        const newValue = currentValue + (currentValue.includes('?') ? '&' : '?') + 'SecurityID=' + token
+        el.setAttribute(attr, newValue)
+      }
+      delete el.dataset.addSecurityIdTo
+    }
+  }
+
   // Retrieve cached universal data and apply it immediately to prevent layout shift
   const cachedUniversal = getCachedUniversalData()
   if (cachedUniversal) {
@@ -143,6 +162,9 @@ const dynamicCacheContent = providedPersonalData => {
     Object.entries(providedPersonalData).forEach(([selector, values]) => {
       applyData(selector, values)
     })
+    if (providedPersonalData.$securityToken) {
+      applySecurityToken(providedPersonalData.$securityToken)
+    }
   }
   if (providedPersonalData && cachedUniversal) {
     return
@@ -175,6 +197,9 @@ const dynamicCacheContent = providedPersonalData => {
         Object.entries(personalised).forEach(([selector, values]) => {
           applyData(selector, values)
         })
+        if (personalised.$securityToken) {
+          applySecurityToken(personalised.$securityToken)
+        }
       })
     }
   })()

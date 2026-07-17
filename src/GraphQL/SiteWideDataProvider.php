@@ -4,6 +4,7 @@ namespace Sunnysideup\DynamicCacheContent\GraphQL;
 
 use InvalidArgumentException;
 use SilverStripe\Core\ClassInfo;
+use SilverStripe\Security\SecurityToken;
 use Sunnysideup\DynamicCacheContent\Interfaces\SiteWideDataProviderInterface;
 
 class SiteWideDataProvider
@@ -14,7 +15,10 @@ class SiteWideDataProvider
         array $context,
         mixed $info
     ): string {
-        return self::buildData('resolvePersonalisedData', $obj, $args, $context, $info);
+        $initialData = [
+            '$securityToken' => SecurityToken::inst()->getValue(),
+        ];
+        return self::buildData('resolvePersonalisedData', $obj, $args, $context, $info, $initialData);
     }
 
     public static function resolveUniversalData(
@@ -37,13 +41,13 @@ class SiteWideDataProvider
         return self::$siteWideDataClasses;
     }
 
-    private static function buildData(string $method, $obj, array $args, array $context, $info): string
+    private static function buildData(string $method, $obj, array $args, array $context, $info, array $initialData = []): string
     {
         if (empty($args['pageId'])) {
             throw new InvalidArgumentException('Page ID is required for personalised data');
         }
 
-        $data = [];
+        $data = $initialData;
         $classes = self::getSiteWideDataClassesWhoProvide();
         foreach ($classes as $class) {
             $data += $class::{$method}($obj, $args, $context, $info);
