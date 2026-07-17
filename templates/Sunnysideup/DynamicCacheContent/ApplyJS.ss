@@ -1,3 +1,4 @@
+<script>
 window.IsFlush = '$IsFlush' // This is a placeholder for the actual value
 
 
@@ -100,8 +101,14 @@ const dynamicCacheContent = providedPersonalData => {
       })
   }
 
-  const applySecurityToken = token => {
-    for (const el of document.querySelectorAll('[data-add-security-id-to]')) {
+  /**
+   * Appends a security token to elements with the `data-add-security-id-to` attribute.
+   * @param {Element} root - Root element to query within (default is document).
+   * @param {string} token - Security token to append.
+   */
+  const applySecurityToken = (root, token) => {
+    root = root || document
+    for (const el of root.querySelectorAll('[data-add-security-id-to]')) {
       const attrs = (el.dataset.addSecurityIdTo || '').split(',').map(attr => attr.trim())
       for (const attr of attrs) {
         const currentValue = el.getAttribute(attr) || ''
@@ -114,14 +121,16 @@ const dynamicCacheContent = providedPersonalData => {
 
   /**
    * Applies fetched data to DOM elements matching a selector.
+   * @param {Element} root - Root element to query within (default is document).
    * @param {string} selector - CSS selector for target elements.
    * @param {object} values - Data to apply (e.g., class, HTML content, callback function).
    */
-  const applyData = (selector, values) => {
+  const applyData = (root, selector, values) => {
     if (selector.startsWith('$')) {
       return
     }
-    document.querySelectorAll(selector).forEach(el => {
+    root = root || document
+    root.querySelectorAll(selector).forEach(el => {
       if (values.class && !el.classList.contains(values.class)) {
         el.classList.add(values.class)
       }
@@ -156,16 +165,16 @@ const dynamicCacheContent = providedPersonalData => {
   const cachedUniversal = getCachedUniversalData()
   if (cachedUniversal) {
     Object.entries(cachedUniversal).forEach(([selector, values]) => {
-      applyData(selector, values)
+      applyData(document, selector, values)
     })
   }
   // run the provided personal data
   if (providedPersonalData) {
     Object.entries(providedPersonalData).forEach(([selector, values]) => {
-      applyData(selector, values)
+      applyData(document, selector, values)
     })
     if (providedPersonalData.\$securityToken) {
-      applySecurityToken(providedPersonalData.\$securityToken)
+      applySecurityToken(document, providedPersonalData.\$securityToken)
     }
   }
   if (providedPersonalData && cachedUniversal) {
@@ -187,23 +196,39 @@ const dynamicCacheContent = providedPersonalData => {
     if (!cachedUniversal && universal) {
       requestAnimationFrame(() => {
         Object.entries(universal).forEach(([selector, values]) => {
-          applyData(selector, values)
+          applyData(document, selector, values)
         })
       })
     }
 
     // Apply personalized data
     if (!providedPersonalData && personalised) {
+      providedPersonalData = personalised   // save it for SSU:DOMContentUpdated
       requestAnimationFrame(() => {
         Object.entries(personalised).forEach(([selector, values]) => {
-          applyData(selector, values)
+          applyData(document, selector, values)
         })
         if (personalised.\$securityToken) {
-          applySecurityToken(personalised.\$securityToken)
+          applySecurityToken(document, personalised.\$securityToken)
         }
       })
     }
   })()
+
+  document.addEventListener('SSU:DOMContentUpdated', function contentUpdatedHandler(event) {
+    if (!event.detail?.updatedElement) {
+      return
+    }
+    const root = event.detail.updatedElement
+    if (providedPersonalData) {
+      Object.entries(providedPersonalData).forEach(([selector, values]) => {
+        applyData(root, selector, values)
+      })
+      if (providedPersonalData.\$securityToken) {
+        applySecurityToken(root, providedPersonalData.\$securityToken)
+      }
+    }
+  });
 }
 dynamicCacheContent(null)
-
+</script>
