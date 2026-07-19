@@ -126,6 +126,7 @@ At the bottom of your main `page.ss` file add:
 <% include Sunnysideup/DynamicCacheContent/ApplyJS %>
 </script>
 ```
+
 This will include a small bit of JS that applies the universal and personalised content to every page as it loads.
 
 ## caching setup
@@ -141,3 +142,30 @@ Please try it and see for yourself. Any feedback appreciated.
 run `?flush=all`
 
 You can also extends `function IsFlush` in the PageController and set it to return 'true' to ensure data is removed.
+
+
+## Adding SecurityID for forms
+
+If you add this to your Silverstripe template, it will automatically get a nice SecurityID.
+
+```html
+<form class="enable-after-adding-security-id" action="foo/bar" method="post" disabled="disabled">
+    <input type="hidden" name="SecurityID" value=""/>
+    <button type="submit">
+        do something
+    </button>
+</form>
+
+```
+
+After the JS runs, it will be:
+
+```html
+<form class="enable-after-adding-security-id" action="foo/bar" method="post">
+    <input type="hidden" name="SecurityID" value="12341231232132" />
+    <button type="submit">
+        do something
+    </button>
+</form>
+
+```
