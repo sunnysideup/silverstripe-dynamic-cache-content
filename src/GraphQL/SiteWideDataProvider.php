@@ -16,7 +16,16 @@ class SiteWideDataProvider
         mixed $info
     ): string {
         $initialData = [
-            '$securityToken' => SecurityToken::inst()->getValue(),
+            'form.enable-after-adding-security-id input[name="SecurityID"]' => [
+                'attrs' => [
+                    'value' => SecurityToken::inst()->getValue(),
+                ],
+            ],
+            'form.enable-after-adding-security-id' => [
+                'attrs' => [
+                    'disabled' => null,
+                ],
+            ],
         ];
         return self::buildData('resolvePersonalisedData', $obj, $args, $context, $info, $initialData);
     }

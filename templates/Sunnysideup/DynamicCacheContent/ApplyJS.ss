@@ -102,33 +102,12 @@ const dynamicCacheContent = providedPersonalData => {
   }
 
   /**
-   * Appends a security token to elements with the `data-add-security-id-to` attribute.
-   * @param {Element} root - Root element to query within (default is document).
-   * @param {string} token - Security token to append.
-   */
-  const applySecurityToken = (root, token) => {
-    root = root || document
-    for (const el of root.querySelectorAll('[data-add-security-id-to]')) {
-      const attrs = (el.dataset.addSecurityIdTo || '').split(',').map(attr => attr.trim())
-      for (const attr of attrs) {
-        const currentValue = el.getAttribute(attr) || ''
-        const newValue = currentValue + (currentValue.includes('?') ? '&' : '?') + 'SecurityID=' + token
-        el.setAttribute(attr, newValue)
-      }
-      delete el.dataset.addSecurityIdTo
-    }
-  }
-
-  /**
    * Applies fetched data to DOM elements matching a selector.
    * @param {Element} root - Root element to query within (default is document).
    * @param {string} selector - CSS selector for target elements.
    * @param {object} values - Data to apply (e.g., class, HTML content, callback function).
    */
   const applyData = (root, selector, values) => {
-    if (selector.startsWith('$')) {
-      return
-    }
     root = root || document
     root.querySelectorAll(selector).forEach(el => {
       if (values.class && !el.classList.contains(values.class)) {
@@ -173,9 +152,6 @@ const dynamicCacheContent = providedPersonalData => {
     Object.entries(providedPersonalData).forEach(([selector, values]) => {
       applyData(document, selector, values)
     })
-    if (providedPersonalData.\$securityToken) {
-      applySecurityToken(document, providedPersonalData.\$securityToken)
-    }
   }
   if (providedPersonalData && cachedUniversal) {
     return
@@ -208,9 +184,6 @@ const dynamicCacheContent = providedPersonalData => {
         Object.entries(personalised).forEach(([selector, values]) => {
           applyData(document, selector, values)
         })
-        if (personalised.\$securityToken) {
-          applySecurityToken(document, personalised.\$securityToken)
-        }
       })
     }
   })()
@@ -224,9 +197,6 @@ const dynamicCacheContent = providedPersonalData => {
       Object.entries(providedPersonalData).forEach(([selector, values]) => {
         applyData(root, selector, values)
       })
-      if (providedPersonalData.\$securityToken) {
-        applySecurityToken(root, providedPersonalData.\$securityToken)
-      }
     }
   });
 }
