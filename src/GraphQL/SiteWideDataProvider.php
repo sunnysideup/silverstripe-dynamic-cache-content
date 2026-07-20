@@ -2,6 +2,7 @@
 
 namespace Sunnysideup\DynamicCacheContent\GraphQL;
 
+use SilverStripe\Control\Middleware\HTTPCacheControlMiddleware;
 use InvalidArgumentException;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Security\SecurityToken;
@@ -15,6 +16,7 @@ class SiteWideDataProvider
         array $context,
         mixed $info
     ): string {
+        HTTPCacheControlMiddleware::singleton()->disableCache(true);
         $initialData = [
             'form.enable-after-adding-security-id input[name="SecurityID"]' => [
                 'attrs' => [
